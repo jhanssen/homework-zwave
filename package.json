@@ -1,0 +1,15 @@
+{
+  "name": "homework-zwave",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "homework": ">=1.0.0",
+    "node": ">4.0.0"
+  },
+  "keywords": [
+    "homework-plugin"
+  ],
+  "dependencies": {
+    "openzwave-shared": "~1.1.8"
+  }
+}
