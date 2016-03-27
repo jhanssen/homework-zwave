@@ -1,11 +1,15 @@
 {
-  "name": "homework-zwave",
-  "version": "0.0.0",
-  "private": true,
+  "name": "hw-zwave",
+  "version": "1.0.0",
   "engines": {
-    "homework": ">=1.0.0",
+    "hw-server": ">=1.0.0",
     "node": ">4.0.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhanssen/homework-zwave"
+  },
+  "license": "BSD-2-Clause",
   "keywords": [
     "homework-plugin"
   ],
