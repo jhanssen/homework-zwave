@@ -1,6 +1,6 @@
 {
   "name": "hw-zwave",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "engines": {
     "hw-server": ">=1.0.0",
     "node": ">4.0.0"
