@@ -56,8 +56,20 @@ Generic.createValue = function(v, type)
     if (!v.read_only) {
         hwv._valueUpdated = function(val) {
             try {
-                if (v.type == "decimal" || v.type == "byte")
+                if (v.type == "decimal" || v.type == "byte") {
                     val = parseInt(val);
+                } else if (v.type == "bool") {
+                    switch (typeof val) {
+                    case "string":
+                        val = (val == "true") ? true : false;
+                        break;
+                    case "number":
+                        val = val ? true : false;
+                        break;
+                    default:
+                        break;
+                    }
+                }
                 data.zwave.setValue(v.node_id, v.class_id, v.instance, v.index, val);
             } catch (e) {
                 data.homework.Console.error("error updating value", e);
