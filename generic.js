@@ -159,6 +159,8 @@ module.exports = {
             var d = new Generic(nodeid, nodeinfo);
             if (nodeinfo.manufacturerid == "0x010f" && nodeinfo.producttype == "0x0900" && nodeinfo.productid == "0x2000") {
                 d._typeOverride = data.homework.Type.RGBWLed;
+            } else if (nodeinfo.type == "Secure Keypad Door Lock") {
+                d._typeOverride = data.homework.Type.Lock;
             }
             return d;
         };
