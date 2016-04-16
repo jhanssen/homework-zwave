@@ -119,7 +119,7 @@ module.exports = {
         data.zwave = devices.zwave;
 
         var ctor = function(nodeid, nodeinfo) {
-            if (nodeinfo.type == "Binary Scene Switch") {
+            if (nodeinfo.type == "Binary Scene Switch" || nodeinfo.type == "Binary Power Switch") {
                 return new Switch(nodeid, nodeinfo);
             }
             return undefined;
