@@ -49,7 +49,7 @@ Generic.createValue = function(v, type)
         if (v.max > v.min)
             range = [v.min, v.max];
     }
-    if (type == data.homework.Type.RGBWLed && name == "Color") {
+    if (type == "RGBWLed" && name == "Color") {
         data.zwave.setChangeVerified(v.node_id, v.class_id, v.instance, v.index, true);
     }
     const hwv = new data.homework.Device.Value(name, { values: values, range: range, handle: v, units: (v.units !== "" ? v.units : undefined), readOnly: v.read_only });
@@ -158,9 +158,9 @@ module.exports = {
         var ctor = function(nodeid, nodeinfo) {
             var d = new Generic(nodeid, nodeinfo);
             if (nodeinfo.manufacturerid == "0x010f" && nodeinfo.producttype == "0x0900" && nodeinfo.productid == "0x2000") {
-                d._typeOverride = data.homework.Type.RGBWLed;
+                d._typeOverride = "RGBWLed";
             } else if (nodeinfo.type == "Secure Keypad Door Lock") {
-                d._typeOverride = data.homework.Type.Lock;
+                d._typeOverride = "Lock";
             }
             return d;
         };

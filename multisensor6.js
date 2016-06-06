@@ -65,7 +65,7 @@ Sensor.prototype = {
         return hwval;
     },
     createHomeworkDevice: function(type, uuid) {
-        var hwdev = new data.homework.Device(data.homework.Type.Sensor, uuid);
+        var hwdev = new data.homework.Device("Sensor", uuid);
         if (!hwdev.name)
             hwdev.name = "MultiSensor " + (++Sensor.cnt);
         for (var k in this._values) {
