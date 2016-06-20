@@ -96,6 +96,7 @@ Generic.createValue = function(v, type)
 
 Generic.prototype = {
     _typeOverride: undefined,
+    _standardsOverride: undefined,
 
     _acceptValue: function(value) {
         if (Generic.acceptable(value))
@@ -114,7 +115,10 @@ Generic.prototype = {
     _removeValue: function(value) {
     },
     createHomeworkDevice: function(type, uuid, devices) {
-        var hwdev = new data.homework.Device(this._typeOverride || type, uuid);
+        var devopts = { uuid: uuid };
+        if (this._standardsOverride)
+            devopts.standards = this._standardsOverride;
+        var hwdev = new data.homework.Device(this._typeOverride || type, devopts);
         if (!hwdev.name) {
             var n = this.type;
             if (!(typeof n === "string") || !n.length)
@@ -150,6 +154,169 @@ Generic.prototype = {
     }
 };
 
+function findValue(dev, name)
+{
+    if (name in dev.values)
+        return dev.values[name];
+    return undefined;
+}
+
+function thermostatOverride()
+{
+    return {
+        mode: {
+            meta: () => {
+                return {
+                    values: {
+                        cool: "cool",
+                        heat: "heat",
+                        off: "off"
+                    },
+                    readOnly: false
+                };
+            },
+            get: (dev) => {
+                var val;
+                if ((val = findValue(dev, "Mode"))) {
+                    switch (val.value) {
+                    case "Cool":
+                        return "cool";
+                    case "Heat":
+                        return "heat";
+                    case "Off":
+                        return "off";
+                    }
+                    throw new Error(`Unhandled thermostat get Mode value ${val.value}`);
+                }
+                throw new Error(`Thermostat get Mode not found`);
+            },
+            set: (dev, value) => {
+                // set Mode to "Cool", "Heat" or "Off"
+                var val;
+                if ((val = findValue(dev, "Mode"))) {
+                    switch (value) {
+                    case "cool":
+                        val.value = "Cool";
+                        return;
+                    case "heat":
+                        val.value = "Heat";
+                        return;
+                    case "off":
+                        val.value = "Off";
+                        return;
+                    }
+                    throw new Error(`Unhandled thermostat set Mode value ${value}`);
+                }
+                throw new Error(`Thermostat set Mode not found`);
+            }
+        },
+        fan: {
+            meta: () => {
+                return {
+                    values: {
+                        auto: "auto",
+                        off: "off"
+                    },
+                    readOnly: false
+                };
+            },
+            get: (dev) => {
+                // set Fan Mode to "Auto Low" or "On Low"
+                var val;
+                if ((val = findValue(dev, "Fan Mode"))) {
+                    switch (val.value) {
+                    case "Auto Low":
+                        return "auto";
+                    case "On Low":
+                        return "on";
+                    }
+                    throw new Error(`Unhandled thermostat get Fan Mode value ${val.value}`);
+                }
+                throw new Error(`Thermostat get Fan Mode not found`);
+            },
+            set: (dev, value) => {
+                var val;
+                if ((val = findValue(dev, "Fan Mode"))) {
+                    switch (value) {
+                    case "auto":
+                        val.value = "Auto Low";
+                        return;
+                    case "on":
+                        val.value = "On Low";
+                        return;
+                    }
+                    throw new Error(`Unhandled thermostat set Fan Mode value ${value}`);
+                }
+                throw new Error(`Thermostat set Fan Mode not found`);
+            }
+        },
+        coolpoint: {
+            meta: () => {
+                return { readOnly: false };
+            },
+            get: (dev) => {
+                // Cooling 1
+                var val;
+                if ((val = findValue(dev, "Cooling 1"))) {
+                    return {
+                        units: val.units,
+                        value: val.value
+                    };
+                }
+                throw new Error(`Thermostat get Cooling 1 not found`);
+            },
+            set: (dev, value) => {
+                var val;
+                if ((val = findValue(dev, "Cooling 1"))) {
+                    val.value = value;
+                    return;
+                }
+                throw new Error(`Thermostat set Cooling 1 not found`);
+            }
+        },
+        heatpoint: {
+            meta: () => {
+                return { readOnly: false };
+            },
+            get: (dev) => {
+                // Heating 1
+                var val;
+                if ((val = findValue(dev, "Heating 1"))) {
+                    return {
+                        units: val.units,
+                        value: val.value
+                    };
+                }
+                throw new Error(`Thermostat get Heating 1 not found`);
+            },
+            set: (dev, value) => {
+                var val;
+                if ((val = findValue(dev, "Heating 1"))) {
+                    val.value = value;
+                    return;
+                }
+                throw new Error(`Thermostat set Heating 1 not found`);
+            }
+        },
+        temperature: {
+            meta: () => {
+                return { readOnly: true };
+            },
+            get: (dev) => {
+                // Temperature
+                var val;
+                if ((val = findValue(dev, "Temperature"))) {
+                    return {
+                        units: val.units,
+                        value: val.value
+                    };
+                }
+                throw new Error(`Thermostat get Temperature not found`);
+            }
+        }
+    };
+}
+
 module.exports = {
     init: function(devices) {
         data.homework = devices.homework;
@@ -159,8 +326,25 @@ module.exports = {
             var d = new Generic(nodeid, nodeinfo);
             if (nodeinfo.manufacturerid == "0x010f" && nodeinfo.producttype == "0x0900" && nodeinfo.productid == "0x2000") {
                 d._typeOverride = "RGBWLed";
+                d._standardsOverride = {
+                    Color: {
+                        meta: () => {
+                            return {
+                                units: "#RRGGBBWW"
+                            };
+                        }
+                    }
+                };
             } else if (nodeinfo.type == "Secure Keypad Door Lock") {
                 d._typeOverride = "Lock";
+                d._standardsOverride = {
+                    Locked: {
+                        meta: () => { return {}; }
+                    }
+                };
+            } else if (/^General Thermostat/.test(nodeinfo.type)) {
+                d._typeOverride = "Thermostat";
+                d._standardsOverride = thermostatOverride();
             }
             return d;
         };

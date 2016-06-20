@@ -55,7 +55,22 @@ Switch.prototype = {
     _removeValue: function(value) {
     },
     createHomeworkDevice: function(type, uuid) {
-        var hwdev = new data.homework.Device(type, uuid);
+        var hwdev = new data.homework.Device(type, {
+            uuid: uuid,
+            standards: {
+                value: {
+                    meta: () => {
+                        return {
+                            readOnly: false,
+                            values: {
+                                off: false,
+                                on: true
+                            }
+                        };
+                    }
+                }
+            }
+        });
         if (!hwdev.name)
             hwdev.name = "Binary Scene Switch " + (++Switch.cnt);
         for (var k in this._values) {

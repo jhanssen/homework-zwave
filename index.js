@@ -26,6 +26,76 @@ function toDeviceType(t)
     return "Unknown";
 };
 
+function initSchemas()
+{
+    var dimmerSchema = new homework.Device.Schema({
+        level: {
+            range: /[0-9]+,[0-9]+/,
+            readOnly: false
+        }
+    });
+    homework.registerDevice("Dimmer", dimmerSchema);
+
+    var sensorSchema = new homework.Device.Schema({
+        Motion: {
+            readOnly: true
+        }
+    });
+    homework.registerDevice("Sensor", sensorSchema);
+
+    var switchSchema = new homework.Device.Schema({
+        value: {
+            values: {
+                off: false,
+                on: true
+            },
+            readOnly: false
+        }
+    });
+    homework.registerDevice("Light", switchSchema);
+    homework.registerDevice("Fan", switchSchema);
+
+    var thermostatSchema = new homework.Device.Schema({
+        mode: {
+            values: {
+                cool: "cool",
+                heat: "heat",
+                off: "off"
+            },
+            readOnly: false
+        },
+        fan: {
+            values: {
+                auto: "auto",
+                off: "off"
+            },
+            readOnly: false
+        },
+        temperature: {
+            readOnly: true
+        },
+        coolpoint: {
+            readOnly: false
+        },
+        heatpoint: {
+            readOnly: false
+        }
+    });
+    homework.registerDevice("Thermostat", thermostatSchema);
+
+    var rgbwLedSchema = new homework.Device.Schema({
+        Color: {
+            units: "#RRGGBBWW"
+        }
+    });
+    homework.registerDevice("RGBWLed", rgbwLedSchema);
+
+    var lockSchema = new homework.Device.Schema({
+        Locked: undefined
+    });
+    homework.registerDevice("Lock", lockSchema);
+}
+
 const zwave = {
     _pendingData: undefined,
     _port: undefined,
@@ -44,6 +114,8 @@ const zwave = {
             homework = hw;
             Console = hw.Console;
             WebSocket = hw.WebSocket;
+
+            initSchemas();
 
             types = cfg.types || Object.create(null);
 
