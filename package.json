@@ -13,6 +13,9 @@
   "keywords": [
     "homework-plugin"
   ],
+  "software.homework": {
+    "moduleProtocol": 1
+  },
   "dependencies": {
     "openzwave-shared": "~1.1.8"
   }
