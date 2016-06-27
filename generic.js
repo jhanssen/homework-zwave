@@ -250,52 +250,37 @@ function thermostatOverride()
                 throw new Error(`Thermostat set Fan Mode not found`);
             }
         },
-        coolpoint: {
+        setpoint: {
             meta: () => {
                 return { readOnly: false };
             },
             get: (dev) => {
-                // Cooling 1
-                var val;
-                if ((val = findValue(dev, "Cooling 1"))) {
+                var val, mval, valname = "Cooling 1";
+                if ((mval = findValue(dev, "Mode"))) {
+                    if (mval.value == "Heat")
+                        valname = "Heating 1";
+                }
+
+                if ((val = findValue(dev, valname))) {
                     return {
                         units: val.units,
                         value: val.value
                     };
                 }
-                throw new Error(`Thermostat get Cooling 1 not found`);
+                throw new Error(`Thermostat get ${valname} not found`);
             },
             set: (dev, value) => {
-                var val;
-                if ((val = findValue(dev, "Cooling 1"))) {
+                var val, mval, valname = "Cooling 1";
+                if ((mval = findValue(dev, "Mode"))) {
+                    if (mval.value == "Heat")
+                        valname = "Heating 1";
+                }
+
+                if ((val = findValue(dev, valname))) {
                     val.value = value;
                     return;
                 }
-                throw new Error(`Thermostat set Cooling 1 not found`);
-            }
-        },
-        heatpoint: {
-            meta: () => {
-                return { readOnly: false };
-            },
-            get: (dev) => {
-                // Heating 1
-                var val;
-                if ((val = findValue(dev, "Heating 1"))) {
-                    return {
-                        units: val.units,
-                        value: val.value
-                    };
-                }
-                throw new Error(`Thermostat get Heating 1 not found`);
-            },
-            set: (dev, value) => {
-                var val;
-                if ((val = findValue(dev, "Heating 1"))) {
-                    val.value = value;
-                    return;
-                }
-                throw new Error(`Thermostat set Heating 1 not found`);
+                throw new Error(`Thermostat set ${valname} not found`);
             }
         },
         temperature: {

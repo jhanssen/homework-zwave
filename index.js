@@ -74,10 +74,7 @@ function initSchemas()
         temperature: {
             readOnly: true
         },
-        coolpoint: {
-            readOnly: false
-        },
-        heatpoint: {
+        setpoint: {
             readOnly: false
         }
     });
