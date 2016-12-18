@@ -123,7 +123,7 @@ module.exports = {
         data.zwave = devices.zwave;
 
         var ctor = function(nodeid, nodeinfo) {
-            if (nodeinfo.type == "Multilevel Scene Switch") {
+            if (nodeinfo.type == "Multilevel Scene Switch" || nodeinfo.type == "Multilevel Power Switch") {
                 return new Dimmer(nodeid, nodeinfo);
             }
             return undefined;
