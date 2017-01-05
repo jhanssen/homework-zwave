@@ -160,14 +160,12 @@ const zwave = {
                     var name = "zwave:" + nodeid;
                     if (name in cfg.poll.devices) {
                         var pollConfig = cfg.poll.devices[name];
-                        if (pollConfig.interval > 0) {
-                            Console.log(`Starting zwave polling for ${name} with intensity ${pollConfig.intensity} and command class ${pollConfig.commandClass}`);
-                            ozw.enablePoll(nodeid, pollConfig.commandClass, pollConfig.intensity || 1);
-                            if (!polling) {
-                                ozw.setPollInterval(cfg.poll.interval);
-                                polling = true;
-                                Console.log(`Setting zwave poll interval to ${cfg.poll.interval}`);
-                            }
+                        Console.log(`Starting zwave polling for ${name} with intensity ${pollConfig.intensity} and command class ${pollConfig.commandClass}`);
+                        ozw.enablePoll(nodeid, pollConfig.commandClass, pollConfig.intensity || 1);
+                        if (!polling) {
+                            ozw.setPollInterval(cfg.poll.interval);
+                            polling = true;
+                            Console.log(`Setting zwave poll interval to ${cfg.poll.interval}`);
                         }
                     }
                 }
