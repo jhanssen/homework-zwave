@@ -153,8 +153,24 @@ const zwave = {
                     Console.log("couldn't create device", nodeinfo);
                 }
             });
+            var polling = false;
             ozw.on('node ready', (nodeid, nodeinfo) => {
                 Console.log("node ready", nodeid, nodeinfo);
+                if (cfg.poll && cfg.poll.devices && cfg.poll.interval > 0) {
+                    var name = "zwave:" + nodeid;
+                    if (name in cfg.poll.devices) {
+                        var pollConfig = cfg.poll.devices[name];
+                        if (pollConfig.interval > 0) {
+                            Console.log(`Starting zwave polling for ${name} with intensity ${pollConfig.intensity} and command class ${pollConfig.commandClass}`);
+                            ozw.enablePoll(nodeid, pollConfig.commandClass, pollConfig.intensity || 1);
+                            if (!polling) {
+                                ozw.setPollInterval(cfg.poll.interval);
+                                polling = true;
+                                Console.log(`Setting zwave poll interval to ${cfg.poll.interval}`);
+                            }
+                        }
+                    }
+                }
             });
             ozw.on('node event', (nodeid, event, valueId) => {
                 Console.log("node event", nodeid, event, valueId);
